@@ -10,13 +10,13 @@ Given your research direction, idea, and claims, Paper Style Scout:
 2. **Searches 3 latest papers** from arXiv most relevant to your work
 3. **Searches 2 highest-cited accepted papers** from the past 2 years via Semantic Scholar
 4. **Analyzes all 5 papers** across 6 dimensions: story arc, abstract pattern, introduction structure, method presentation, experiment design, and language style
-5. **Generates `WRITING_STYLE_GUIDE.md`** — a comprehensive, field-specific writing guide with:
+5. **Generates a project-level writing skill** at `skills/paper-writing-guide/SKILL.md` — a proper SKILL.md with frontmatter that both Claude Code and Codex can load, containing:
    - Reference paper analysis summary
    - Recommended narrative structure
    - Section-by-section writing templates (Abstract, Introduction, Related Work, Method, Experiments, Conclusion)
    - Concrete writing techniques extracted from top papers
    - **Mandatory guardrails** (anti-AI-speak, anti-overclaim, data grounding, consistency, honesty)
-6. **Registers the guide** in your project's `CLAUDE.md` and `AGENTS.md` so both agents automatically follow it
+6. **Registers the skill** in your project's `CLAUDE.md` and `AGENTS.md` so both agents automatically load and follow it
 
 ## Quick Start
 
@@ -48,7 +48,7 @@ Or provide more context:
 
 ### 3. Write
 
-After the guide is generated, use your normal paper writing workflow. Both Claude Code and Codex will automatically read and follow the guide.
+After the skill is generated, use your normal paper writing workflow. Both Claude Code and Codex will automatically load and follow the generated writing skill.
 
 ```
 /paper-plan "NARRATIVE_REPORT.md"
@@ -107,7 +107,9 @@ Overrides:
 your-project/
 ├── CLAUDE.md                      # Updated with paper writing section
 ├── AGENTS.md                      # Updated with paper writing section
-├── WRITING_STYLE_GUIDE.md         # Generated writing guide (800-1200 lines)
+├── skills/
+│   └── paper-writing-guide/
+│       └── SKILL.md               # Generated project-level writing skill (800-1200 lines)
 ├── papers/
 │   └── reference_papers/          # Downloaded reference PDFs
 └── ... (your existing project files)
@@ -119,13 +121,13 @@ your-project/
 /paper-style-scout "direction"
         │
         ▼
-  WRITING_STYLE_GUIDE.md + CLAUDE.md / AGENTS.md updated
+  skills/paper-writing-guide/SKILL.md + CLAUDE.md / AGENTS.md updated
         │
         ▼
   /paper-plan ──► /paper-write ──► /paper-compile ──► /auto-paper-improvement-loop
         │               │                │                      │
         └───────────────┴────────────────┴──────────────────────┘
-                         all follow the guide
+                         all follow the generated skill
 ```
 
 ## Requirements
@@ -152,13 +154,13 @@ MIT
 2. **搜索 3 篇最新相关论文**（arXiv）
 3. **搜索 2 篇近两年最高引中稿论文**（Semantic Scholar）
 4. **对 5 篇论文做 6 维度分析**：故事线、Abstract 模式、Introduction 结构、方法呈现、实验设计、语言风格
-5. **生成 `WRITING_STYLE_GUIDE.md`** — 一份完整的、针对你所在领域的写作指南，包含：
+5. **生成项目级写作技能** `skills/paper-writing-guide/SKILL.md` — 一个带 frontmatter 的 SKILL.md 技能文件，Claude Code 和 Codex 都可直接加载，包含：
    - 参考论文分析总结
    - 推荐的叙事结构
    - 逐章节写作模板（Abstract、Introduction、Related Work、Method、Experiments、Conclusion）
    - 从顶会论文中提炼的具体写作技巧
    - **强制性约束**（反 AI 口癖、反 overclaim、数据真实性、一致性、诚实性）
-6. **注册到项目配置** — 自动更新 `CLAUDE.md` 和 `AGENTS.md`，确保两个 agent 都遵循指南
+6. **注册到项目配置** — 自动更新 `CLAUDE.md` 和 `AGENTS.md`，确保两个 agent 都会加载并遵循该技能
 
 ## 快速开始
 
@@ -190,7 +192,7 @@ cp -r skills/paper-style-scout/ ~/.claude/skills/paper-style-scout/
 
 ### 写论文
 
-指南生成后，正常使用论文写作流程即可。Claude Code 和 Codex 都会自动读取并遵循指南。
+技能生成后，正常使用论文写作流程即可。Claude Code 和 Codex 都会自动加载并遵循生成的写作技能。
 
 ## 约束规则
 
@@ -244,7 +246,9 @@ cp -r skills/paper-style-scout/ ~/.claude/skills/paper-style-scout/
 your-project/
 ├── CLAUDE.md                      # 已更新，包含论文写作指引
 ├── AGENTS.md                      # 已更新，包含论文写作指引
-├── WRITING_STYLE_GUIDE.md         # 生成的写作指南（800-1200 行）
+├── skills/
+│   └── paper-writing-guide/
+│       └── SKILL.md               # 生成的项目级写作技能（800-1200 行）
 ├── papers/
 │   └── reference_papers/          # 下载的参考论文 PDF
 └── ... (你原有的项目文件)
