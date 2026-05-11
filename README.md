@@ -1,6 +1,8 @@
 # Paper Style Scout
 
-A skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [Codex](https://openai.com/index/codex/) that automatically analyzes top papers in your field and generates a project-specific writing style guide before you start writing.
+A standalone skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [Codex](https://openai.com/index/codex/) that automatically analyzes top papers in your field and generates a project-specific writing skill before you start writing.
+
+**Zero dependencies.** No external scripts, no other skills required. All API calls are inline Python using only the standard library.
 
 ## What It Does
 
@@ -43,21 +45,16 @@ In Claude Code:
 Or provide more context:
 
 ```
-/paper-style-scout "We propose a novel attention mechanism for efficient long-context reasoning. Our method reduces memory by 40% while maintaining accuracy on LongBench."
+/paper-style-scout "We propose a new attention mechanism for efficient long-context reasoning. Our method reduces memory by 40% while maintaining accuracy on LongBench."
 ```
 
 ### 3. Write
 
 After the skill is generated, use your normal paper writing workflow. Both Claude Code and Codex will automatically load and follow the generated writing skill.
 
-```
-/paper-plan "NARRATIVE_REPORT.md"
-/paper-write "PAPER_PLAN.md"
-```
-
 ## Guardrails
 
-The generated writing guide includes mandatory rules that the agent cannot bypass:
+The generated writing skill includes mandatory rules that the agent cannot bypass:
 
 ### Anti-AI-Speak
 
@@ -105,36 +102,21 @@ Overrides:
 
 ```
 your-project/
-├── CLAUDE.md                      # Updated with paper writing section
-├── AGENTS.md                      # Updated with paper writing section
+├── CLAUDE.md                          # Updated with paper writing section
+├── AGENTS.md                          # Updated with paper writing section
 ├── skills/
 │   └── paper-writing-guide/
-│       └── SKILL.md               # Generated project-level writing skill (800-1200 lines)
+│       └── SKILL.md                   # Generated project-level writing skill
 ├── papers/
-│   └── reference_papers/          # Downloaded reference PDFs
+│   └── reference_papers/              # Downloaded reference PDFs
 └── ... (your existing project files)
-```
-
-## How It Integrates
-
-```
-/paper-style-scout "direction"
-        │
-        ▼
-  skills/paper-writing-guide/SKILL.md + CLAUDE.md / AGENTS.md updated
-        │
-        ▼
-  /paper-plan ──► /paper-write ──► /paper-compile ──► /auto-paper-improvement-loop
-        │               │                │                      │
-        └───────────────┴────────────────┴──────────────────────┘
-                         all follow the generated skill
 ```
 
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Codex CLI](https://openai.com/index/codex/)
 - Internet access (for arXiv and Semantic Scholar APIs)
-- Optional: `arxiv_fetch.py` and `semantic_scholar_fetch.py` from [ARIS](https://github.com/) for enhanced search (falls back to inline Python if not available)
+- Python 3 (stdlib only — no pip packages needed)
 
 ## License
 
@@ -144,7 +126,9 @@ MIT
 
 # Paper Style Scout [中文]
 
-一个适用于 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 和 [Codex](https://openai.com/index/codex/) 的技能，在写论文之前自动分析你所在领域的顶会论文，生成项目专属的写作风格指南。
+一个适用于 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 和 [Codex](https://openai.com/index/codex/) 的独立技能，在写论文之前自动分析你所在领域的顶会论文，生成项目专属的写作技能。
+
+**零依赖。** 不需要外部脚本或其他技能。所有 API 调用都使用 Python 标准库内联完成。
 
 ## 功能
 
@@ -157,7 +141,7 @@ MIT
 5. **生成项目级写作技能** `skills/paper-writing-guide/SKILL.md` — 一个带 frontmatter 的 SKILL.md 技能文件，Claude Code 和 Codex 都可直接加载，包含：
    - 参考论文分析总结
    - 推荐的叙事结构
-   - 逐章节写作模板（Abstract、Introduction、Related Work、Method、Experiments、Conclusion）
+   - 逐章节写作模板
    - 从顶会论文中提炼的具体写作技巧
    - **强制性约束**（反 AI 口癖、反 overclaim、数据真实性、一致性、诚实性）
 6. **注册到项目配置** — 自动更新 `CLAUDE.md` 和 `AGENTS.md`，确保两个 agent 都会加载并遵循该技能
@@ -165,8 +149,6 @@ MIT
 ## 快速开始
 
 ### 安装
-
-将 `skills/` 目录复制到你的项目中（或全局 skills 目录）：
 
 ```bash
 # 方式 A：复制到项目
@@ -178,16 +160,8 @@ cp -r skills/paper-style-scout/ ~/.claude/skills/paper-style-scout/
 
 ### 运行
 
-在 Claude Code 中：
-
 ```
 /paper-style-scout "你的研究方向、idea 和 claims"
-```
-
-也可以提供更多上下文：
-
-```
-/paper-style-scout "我们提出了一种新的注意力机制用于高效长上下文推理。方法在 LongBench 上减少 40% 内存同时保持精度。"
 ```
 
 ### 写论文
@@ -195,8 +169,6 @@ cp -r skills/paper-style-scout/ ~/.claude/skills/paper-style-scout/
 技能生成后，正常使用论文写作流程即可。Claude Code 和 Codex 都会自动加载并遵循生成的写作技能。
 
 ## 约束规则
-
-生成的写作指南包含以下强制性规则：
 
 ### 反 AI 口癖
 
@@ -231,34 +203,11 @@ cp -r skills/paper-style-scout/ ~/.claude/skills/paper-style-scout/
 | `CITED_YEAR_RANGE` | 2024-2026 | 高引论文年份范围 |
 | `CITED_MIN_CITATIONS` | 30 | 最低引用数阈值 |
 
-覆盖方式：
-
-```
-/paper-style-scout "topic" - latest: 5
-/paper-style-scout "topic" - cited: 3
-/paper-style-scout "topic" - min-citations: 100
-/paper-style-scout "topic" - year: 2023-2026
-```
-
-## 运行后的项目结构
-
-```
-your-project/
-├── CLAUDE.md                      # 已更新，包含论文写作指引
-├── AGENTS.md                      # 已更新，包含论文写作指引
-├── skills/
-│   └── paper-writing-guide/
-│       └── SKILL.md               # 生成的项目级写作技能（800-1200 行）
-├── papers/
-│   └── reference_papers/          # 下载的参考论文 PDF
-└── ... (你原有的项目文件)
-```
-
 ## 要求
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 或 [Codex CLI](https://openai.com/index/codex/)
 - 网络访问（arXiv 和 Semantic Scholar API）
-- 可选：ARIS 的 `arxiv_fetch.py` 和 `semantic_scholar_fetch.py`（如果没有，会自动降级为内联 Python 搜索）
+- Python 3（仅标准库，无需 pip 安装）
 
 ## License
 
