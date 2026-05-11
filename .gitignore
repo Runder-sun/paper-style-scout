@@ -1,0 +1,13 @@
+papers/
+*.pdf
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+__pycache__/
+*.pyc
+.DS_Store

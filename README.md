@@ -1,0 +1,261 @@
+# Paper Style Scout
+
+A skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and [Codex](https://openai.com/index/codex/) that automatically analyzes top papers in your field and generates a project-specific writing style guide before you start writing.
+
+## What It Does
+
+Given your research direction, idea, and claims, Paper Style Scout:
+
+1. **Scans your repository** to understand your actual experiments, methods, and results
+2. **Searches 3 latest papers** from arXiv most relevant to your work
+3. **Searches 2 highest-cited accepted papers** from the past 2 years via Semantic Scholar
+4. **Analyzes all 5 papers** across 6 dimensions: story arc, abstract pattern, introduction structure, method presentation, experiment design, and language style
+5. **Generates `WRITING_STYLE_GUIDE.md`** — a comprehensive, field-specific writing guide with:
+   - Reference paper analysis summary
+   - Recommended narrative structure
+   - Section-by-section writing templates (Abstract, Introduction, Related Work, Method, Experiments, Conclusion)
+   - Concrete writing techniques extracted from top papers
+   - **Mandatory guardrails** (anti-AI-speak, anti-overclaim, data grounding, consistency, honesty)
+6. **Registers the guide** in your project's `CLAUDE.md` and `AGENTS.md` so both agents automatically follow it
+
+## Quick Start
+
+### 1. Install
+
+Copy the `skills/` directory into your project (or your global skills directory):
+
+```bash
+# Option A: Copy to your project
+cp -r skills/ /path/to/your/project/skills/
+
+# Option B: Install globally for Claude Code
+cp -r skills/paper-style-scout/ ~/.claude/skills/paper-style-scout/
+```
+
+### 2. Run
+
+In Claude Code:
+
+```
+/paper-style-scout "your research direction, idea, and claims"
+```
+
+Or provide more context:
+
+```
+/paper-style-scout "We propose a novel attention mechanism for efficient long-context reasoning. Our method reduces memory by 40% while maintaining accuracy on LongBench."
+```
+
+### 3. Write
+
+After the guide is generated, use your normal paper writing workflow. Both Claude Code and Codex will automatically read and follow the guide.
+
+```
+/paper-plan "NARRATIVE_REPORT.md"
+/paper-write "PAPER_PLAN.md"
+```
+
+## Guardrails
+
+The generated writing guide includes mandatory rules that the agent cannot bypass:
+
+### Anti-AI-Speak
+
+Banned words: `delve`, `pivotal`, `landscape`, `leveraging`, `comprehensive`, `facilitate`, `underscore`, `testament`, `tapestry`, `myriad`, `paramount`, `intricate`, `elucidate`...
+
+Banned phrases: *"it is worth noting that"*, *"plays a crucial role"*, *"has attracted significant attention"*, *"paves the way for"*...
+
+### Anti-Overclaim
+
+- No "first" / "novel" / "SOTA" without evidence
+- "Significantly" requires statistical tests
+- Every claim must be scoped to the actual experimental setting
+
+### Data Grounding
+
+- Every number must trace to an experiment output file
+- Missing data gets `[TODO]`, never a fabricated number
+- No rounding up or beautifying results
+
+### Consistency & Honesty
+
+- One term per concept throughout the paper
+- Include a Limitations section
+- Report negative results; do not cherry-pick
+
+## Configuration
+
+| Constant | Default | Description |
+|----------|---------|-------------|
+| `NUM_LATEST_PAPERS` | 3 | Latest papers from arXiv |
+| `NUM_CITED_PAPERS` | 2 | Highest-cited papers from Semantic Scholar |
+| `CITED_YEAR_RANGE` | 2024-2026 | Year range for high-citation search |
+| `CITED_MIN_CITATIONS` | 30 | Minimum citation threshold |
+
+Overrides:
+
+```
+/paper-style-scout "topic" - latest: 5
+/paper-style-scout "topic" - cited: 3
+/paper-style-scout "topic" - min-citations: 100
+/paper-style-scout "topic" - year: 2023-2026
+```
+
+## Project Structure After Running
+
+```
+your-project/
+├── CLAUDE.md                      # Updated with paper writing section
+├── AGENTS.md                      # Updated with paper writing section
+├── WRITING_STYLE_GUIDE.md         # Generated writing guide (800-1200 lines)
+├── papers/
+│   └── reference_papers/          # Downloaded reference PDFs
+└── ... (your existing project files)
+```
+
+## How It Integrates
+
+```
+/paper-style-scout "direction"
+        │
+        ▼
+  WRITING_STYLE_GUIDE.md + CLAUDE.md / AGENTS.md updated
+        │
+        ▼
+  /paper-plan ──► /paper-write ──► /paper-compile ──► /auto-paper-improvement-loop
+        │               │                │                      │
+        └───────────────┴────────────────┴──────────────────────┘
+                         all follow the guide
+```
+
+## Requirements
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Codex CLI](https://openai.com/index/codex/)
+- Internet access (for arXiv and Semantic Scholar APIs)
+- Optional: `arxiv_fetch.py` and `semantic_scholar_fetch.py` from [ARIS](https://github.com/) for enhanced search (falls back to inline Python if not available)
+
+## License
+
+MIT
+
+---
+
+# Paper Style Scout [中文]
+
+一个适用于 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 和 [Codex](https://openai.com/index/codex/) 的技能，在写论文之前自动分析你所在领域的顶会论文，生成项目专属的写作风格指南。
+
+## 功能
+
+给定你的研究方向、idea 和 claims，Paper Style Scout 会：
+
+1. **扫描你的仓库**，理解实际的实验、方法和结果
+2. **搜索 3 篇最新相关论文**（arXiv）
+3. **搜索 2 篇近两年最高引中稿论文**（Semantic Scholar）
+4. **对 5 篇论文做 6 维度分析**：故事线、Abstract 模式、Introduction 结构、方法呈现、实验设计、语言风格
+5. **生成 `WRITING_STYLE_GUIDE.md`** — 一份完整的、针对你所在领域的写作指南，包含：
+   - 参考论文分析总结
+   - 推荐的叙事结构
+   - 逐章节写作模板（Abstract、Introduction、Related Work、Method、Experiments、Conclusion）
+   - 从顶会论文中提炼的具体写作技巧
+   - **强制性约束**（反 AI 口癖、反 overclaim、数据真实性、一致性、诚实性）
+6. **注册到项目配置** — 自动更新 `CLAUDE.md` 和 `AGENTS.md`，确保两个 agent 都遵循指南
+
+## 快速开始
+
+### 安装
+
+将 `skills/` 目录复制到你的项目中（或全局 skills 目录）：
+
+```bash
+# 方式 A：复制到项目
+cp -r skills/ /path/to/your/project/skills/
+
+# 方式 B：全局安装（Claude Code）
+cp -r skills/paper-style-scout/ ~/.claude/skills/paper-style-scout/
+```
+
+### 运行
+
+在 Claude Code 中：
+
+```
+/paper-style-scout "你的研究方向、idea 和 claims"
+```
+
+也可以提供更多上下文：
+
+```
+/paper-style-scout "我们提出了一种新的注意力机制用于高效长上下文推理。方法在 LongBench 上减少 40% 内存同时保持精度。"
+```
+
+### 写论文
+
+指南生成后，正常使用论文写作流程即可。Claude Code 和 Codex 都会自动读取并遵循指南。
+
+## 约束规则
+
+生成的写作指南包含以下强制性规则：
+
+### 反 AI 口癖
+
+禁用词汇：`delve`、`pivotal`、`landscape`、`leveraging`、`comprehensive`、`facilitate`、`underscore`、`testament`、`tapestry`、`myriad`、`paramount`、`intricate`、`elucidate`...
+
+禁用句式：*"it is worth noting that"*、*"plays a crucial role"*、*"has attracted significant attention"*、*"paves the way for"*...
+
+### 反 Overclaim
+
+- 禁止无证据使用 "first" / "novel" / "SOTA"
+- "Significantly" 必须有统计检验支持
+- 所有 claim 必须限定在实验范围内
+
+### 数据真实性
+
+- 每个数字必须追溯到实验输出文件
+- 缺失数据用 `[TODO]` 标记，绝不编造
+- 不美化实验结果
+
+### 一致性与诚实
+
+- 同一概念全文使用统一术语
+- 包含 Limitations 章节
+- 如实报告负面结果，不 cherry-pick
+
+## 配置
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `NUM_LATEST_PAPERS` | 3 | arXiv 搜索的最新论文数 |
+| `NUM_CITED_PAPERS` | 2 | Semantic Scholar 搜索的高引论文数 |
+| `CITED_YEAR_RANGE` | 2024-2026 | 高引论文年份范围 |
+| `CITED_MIN_CITATIONS` | 30 | 最低引用数阈值 |
+
+覆盖方式：
+
+```
+/paper-style-scout "topic" - latest: 5
+/paper-style-scout "topic" - cited: 3
+/paper-style-scout "topic" - min-citations: 100
+/paper-style-scout "topic" - year: 2023-2026
+```
+
+## 运行后的项目结构
+
+```
+your-project/
+├── CLAUDE.md                      # 已更新，包含论文写作指引
+├── AGENTS.md                      # 已更新，包含论文写作指引
+├── WRITING_STYLE_GUIDE.md         # 生成的写作指南（800-1200 行）
+├── papers/
+│   └── reference_papers/          # 下载的参考论文 PDF
+└── ... (你原有的项目文件)
+```
+
+## 要求
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 或 [Codex CLI](https://openai.com/index/codex/)
+- 网络访问（arXiv 和 Semantic Scholar API）
+- 可选：ARIS 的 `arxiv_fetch.py` 和 `semantic_scholar_fetch.py`（如果没有，会自动降级为内联 Python 搜索）
+
+## License
+
+MIT
