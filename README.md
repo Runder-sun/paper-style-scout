@@ -12,7 +12,7 @@ Given your research direction, idea, and claims, Paper Style Scout:
 2. **Searches 3 latest papers** from arXiv most relevant to your work
 3. **Searches 2 highest-cited accepted papers** from the past 2 years via Semantic Scholar
 4. **Analyzes all 5 papers** across 6 dimensions: story arc, abstract pattern, introduction structure, method presentation, experiment design, and language style
-5. **Generates a project-level writing skill** at `skills/paper-writing-guide/SKILL.md` — a proper SKILL.md with frontmatter that both Claude Code and Codex can load, containing:
+5. **Generates a project-level writing skill** at `.claude/skills/paper-writing-guide/SKILL.md` (for Claude Code) and `.agents/skills/paper-writing-guide/SKILL.md` (for Codex) — proper SKILL.md files with frontmatter that both agents can discover and load, containing:
    - Reference paper analysis summary
    - Recommended narrative structure
    - Section-by-section writing templates (Abstract, Introduction, Related Work, Method, Experiments, Conclusion)
@@ -24,14 +24,20 @@ Given your research direction, idea, and claims, Paper Style Scout:
 
 ### 1. Install
 
-Copy the `skills/` directory into your project (or your global skills directory):
+Copy the skill to your project's skill directory:
 
 ```bash
-# Option A: Copy to your project
-cp -r skills/ /path/to/your/project/skills/
+# For Claude Code (project-level)
+cp -r paper-style-scout/ /path/to/your/project/.claude/skills/paper-style-scout/
 
-# Option B: Install globally for Claude Code
-cp -r skills/paper-style-scout/ ~/.claude/skills/paper-style-scout/
+# For Codex (project-level)
+cp -r paper-style-scout/ /path/to/your/project/.agents/skills/paper-style-scout/
+
+# Or install globally for Claude Code
+cp -r paper-style-scout/ ~/.claude/skills/paper-style-scout/
+
+# Or install globally for Codex
+cp -r paper-style-scout/ ~/.agents/skills/paper-style-scout/
 ```
 
 ### 2. Run
@@ -102,13 +108,16 @@ Overrides:
 
 ```
 your-project/
-├── CLAUDE.md                          # Updated with paper writing section
-├── AGENTS.md                          # Updated with paper writing section
-├── skills/
+├── CLAUDE.md                              # Updated with paper writing section
+├── AGENTS.md                              # Updated with paper writing section
+├── .claude/skills/
 │   └── paper-writing-guide/
-│       └── SKILL.md                   # Generated project-level writing skill
+│       └── SKILL.md                       # Generated skill (Claude Code discovers this)
+├── .agents/skills/
+│   └── paper-writing-guide/
+│       └── SKILL.md                       # Same skill (Codex discovers this)
 ├── papers/
-│   └── reference_papers/              # Downloaded reference PDFs
+│   └── reference_papers/                  # Downloaded reference PDFs
 └── ... (your existing project files)
 ```
 
@@ -138,7 +147,7 @@ MIT
 2. **搜索 3 篇最新相关论文**（arXiv）
 3. **搜索 2 篇近两年最高引中稿论文**（Semantic Scholar）
 4. **对 5 篇论文做 6 维度分析**：故事线、Abstract 模式、Introduction 结构、方法呈现、实验设计、语言风格
-5. **生成项目级写作技能** `skills/paper-writing-guide/SKILL.md` — 一个带 frontmatter 的 SKILL.md 技能文件，Claude Code 和 Codex 都可直接加载，包含：
+5. **生成项目级写作技能** — 在 `.claude/skills/paper-writing-guide/SKILL.md`（Claude Code 发现路径）和 `.agents/skills/paper-writing-guide/SKILL.md`（Codex 发现路径）各生成一份，包含：
    - 参考论文分析总结
    - 推荐的叙事结构
    - 逐章节写作模板
@@ -150,12 +159,20 @@ MIT
 
 ### 安装
 
-```bash
-# 方式 A：复制到项目
-cp -r skills/ /path/to/your/project/skills/
+将 skill 复制到项目的 skill 目录：
 
-# 方式 B：全局安装（Claude Code）
-cp -r skills/paper-style-scout/ ~/.claude/skills/paper-style-scout/
+```bash
+# Claude Code（项目级）
+cp -r paper-style-scout/ /path/to/your/project/.claude/skills/paper-style-scout/
+
+# Codex（项目级）
+cp -r paper-style-scout/ /path/to/your/project/.agents/skills/paper-style-scout/
+
+# 或全局安装（Claude Code）
+cp -r paper-style-scout/ ~/.claude/skills/paper-style-scout/
+
+# 或全局安装（Codex）
+cp -r paper-style-scout/ ~/.agents/skills/paper-style-scout/
 ```
 
 ### 运行

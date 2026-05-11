@@ -226,7 +226,17 @@ Document: How many paragraphs for each phase? Where does the method first appear
 
 The output is a **project-level SKILL.md** — a proper skill file with YAML frontmatter that both Claude Code and Codex can load and follow as a skill.
 
-Generate the skill file at: `skills/paper-writing-guide/SKILL.md`
+Generate the skill file in the correct platform-specific directory:
+
+- **Claude Code**: `.claude/skills/paper-writing-guide/SKILL.md`
+- **Codex**: `.agents/skills/paper-writing-guide/SKILL.md` (preferred cross-platform path) or `.codex/skills/paper-writing-guide/SKILL.md`
+
+Create the directory and write the skill file to the path that matches the current agent. If unsure, create in both locations:
+
+```bash
+mkdir -p .claude/skills/paper-writing-guide
+mkdir -p .agents/skills/paper-writing-guide
+```
 
 The generated SKILL.md must have this structure:
 
@@ -318,10 +328,11 @@ The following words and phrases are banned. Do NOT use them anywhere in the pape
 ### Step 7: Write the Skill File
 
 ```bash
-mkdir -p skills/paper-writing-guide
+mkdir -p .claude/skills/paper-writing-guide
+mkdir -p .agents/skills/paper-writing-guide
 ```
 
-Write the complete skill to `skills/paper-writing-guide/SKILL.md`.
+Write the same skill file to both paths (so both Claude Code and Codex can discover it).
 
 Requirements:
 - Valid YAML frontmatter (name, description, argument-hint, allowed-tools)
@@ -345,7 +356,7 @@ Content to append to **`CLAUDE.md`**:
 ```markdown
 ## Paper Writing
 
-This project has a generated writing guide skill at `skills/paper-writing-guide/SKILL.md`.
+This project has a generated writing guide skill at `.claude/skills/paper-writing-guide/SKILL.md`.
 Before writing any paper content, load and follow this skill.
 All guardrails in its Section 5 are mandatory. Violations must be fixed before proceeding.
 ```
@@ -355,7 +366,7 @@ Content to append to **`AGENTS.md`**:
 ```markdown
 ## Paper Writing
 
-This project has a generated writing guide skill at `skills/paper-writing-guide/SKILL.md`.
+This project has a generated writing guide skill at `.agents/skills/paper-writing-guide/SKILL.md`.
 Before drafting any paper section, load and follow this skill.
 All guardrails in its Section 5 are mandatory — do not skip or soften them.
 ```
@@ -364,7 +375,9 @@ All guardrails in its Section 5 are mandatory — do not skip or soften them.
 
 - This skill is **fully standalone**. All API calls are inline Python using only the standard library. No external scripts or other skills are required.
 - The output is a **project-level SKILL.md** (not a plain document). It must have YAML frontmatter and be loadable by Claude Code and Codex.
-- The generated skill is project-specific. It lives in `skills/paper-writing-guide/SKILL.md`.
+- Claude Code discovers project skills in `.claude/skills/<name>/SKILL.md`.
+- Codex discovers project skills in `.agents/skills/<name>/SKILL.md` or `.codex/skills/<name>/SKILL.md`.
+- The generated skill should be written to both `.claude/skills/paper-writing-guide/` and `.agents/skills/paper-writing-guide/` so both agents can discover it.
 - When selecting reference papers, prioritize relevance over recency.
 - All 5 papers must be from the same general field as the project.
 - The guardrails are non-negotiable. They go into every generated skill.
@@ -373,7 +386,8 @@ All guardrails in its Section 5 are mandatory — do not skip or soften them.
 
 ## Output
 
-1. `skills/paper-writing-guide/SKILL.md` — The project-level writing skill (800-1200 lines)
-2. Updated `CLAUDE.md` — With paper writing section referencing the skill
-3. Updated `AGENTS.md` — With paper writing section referencing the skill
-4. Downloaded PDFs in `papers/reference_papers/`
+1. `.claude/skills/paper-writing-guide/SKILL.md` — Writing skill for Claude Code (800-1200 lines)
+2. `.agents/skills/paper-writing-guide/SKILL.md` — Same writing skill for Codex
+3. Updated `CLAUDE.md` — With paper writing section referencing the skill
+4. Updated `AGENTS.md` — With paper writing section referencing the skill
+5. Downloaded PDFs in `papers/reference_papers/`
