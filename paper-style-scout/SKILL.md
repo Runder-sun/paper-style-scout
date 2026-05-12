@@ -129,7 +129,40 @@ done
 
 ### Step 3: Search Highest-Cited Accepted Papers (Semantic Scholar)
 
-Construct a Semantic Scholar query targeting formally published, highly-cited papers:
+Find the most relevant AND highest-cited papers. Strategy: search by relevance first (Semantic Scholar default ranking), then sort results by citation count. This avoids pulling in loosely-related mega-papers (e.g., "DeepSeek-R1" with 5000+ cites but irrelevant to your specific topic).
+
+```bash
+python3 - <<'PYEOF'
+import json, urllib.request, urllib.parse
+
+# Step A: Search by relevance (Semantic Scholar default), limit to recent + cited papers
+query = urllib.parse.quote("QUERY")
+fields = "title,authors,year,citationCount,venue,publicationTypes,abstract,externalIds,openAccessPdf"
+url = (f"https://api.semanticscholar.org/graph/v1/paper/search"
+       f"?query={query}&limit=50&fields={fields}"
+       f"&year=CITED_YEAR_RANGE&minCitationCount=CITED_MIN_CITATIONS")
+req = urllib.request.Request(url, headers={"User-Agent": "paper-style-scout/1.0"})
+try:
+    with urllib.request.urlopen(req, timeout=30) as r:
+        data = json.loads(r.read())
+
+    # Step B: Sort the relevance-filtered results by citation count (desc)
+    papers = sorted(data.get("data", []), key=lambda p: p.get("citationCount", 0), reverse=True)
+
+    print(f"Found {len(papers)} relevant papers with >={CITED_MIN_CITATIONS} citations")
+    print("Top candidates (relevance-filtered, sorted by citations):")
+    for p in papers[:5]:
+        pdf = p.get("openAccessPdf", {})
+        pdf_url = pdf.get("url", "N/A") if pdf else "N/A"
+        print(f"  {p.get('citationCount',0):>5} cites | {p.get('year','')} | {p.get('venue','N/A')[:40]} | {p.get('title','')[:60]}")
+        print(f"    PDF: {pdf_url}")
+except urllib.error.HTTPError as e:
+    print(f"Semantic Scholar API error: {e.code} {e.reason}")
+    print("Falling back to web search.")
+except Exception as e:
+    print(f"Error: {e}")
+PYEOF
+```
 
 ```bash
 python3 - <<'PYEOF'
